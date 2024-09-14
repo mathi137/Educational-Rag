@@ -31,17 +31,12 @@ def load_from_file(file_bytes: bytes, file_name: str) -> Document:
 
 
 def load_from_audio(file_bytes: bytes, file_name: str):
-    file_data = Binary(file_bytes)
+    # file_data = Binary(file_bytes)
     file_extension = file_name.split('.')[-1]
     
-    with tempfile.NamedTemporaryFile(suffix=f'.{file_extension}', delete=False) as temp_file:
-        temp_path = temp_file.name
-        temp_file.write(file_data)
-    
-    
     match file_extension:
-        case 'mp3' | 'ogg':
-            text = transcriber_model.audio_to_text(temp_path)
+        case 'mp3' | 'ogg' | 'm4a' | 'mpeg' | 'mpga' | 'wav' | 'webm':
+            text = transcriber_model.audio_to_text(file_bytes)
         case _:
             raise Exception('File not supported.')
     

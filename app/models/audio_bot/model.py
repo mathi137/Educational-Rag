@@ -14,14 +14,14 @@ class AgentTranscriber:
         self.__temperature = 0.1 
 
 
-    def audio_to_text(self, audio_path):
-        with open(audio_path, 'rb') as audio_file:
-            translation = self.__client.audio.translations.create(
-                model="whisper-1", 
-                file=audio_file,
-                temperature=self.__temperature,
-                prompt="O aúdio terá falas em português brasileiro."
-            )
+    def audio_to_text(self, file_bytes):
+        # with open(audio_path, 'rb') as audio_file:
+        translation = self.__client.audio.translations.create(
+            model="whisper-1", 
+            file=file_bytes,
+            temperature=self.__temperature,
+            prompt="O aúdio terá falas em português brasileiro."
+        )
         result = translation.text
         
         return result
@@ -37,9 +37,6 @@ class AgentTranscriber:
         
         response.write_to_file(speech_file_path)
         return response
-    
-    def youtube_to_text(self, url):
-        pass
     
     
 transcriber_model = AgentTranscriber()
