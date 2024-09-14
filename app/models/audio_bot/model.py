@@ -38,6 +38,9 @@ class AgentTranscriber:
         response.write_to_file(speech_file_path)
         return response
     
+    def youtube_to_text(self, url):
+        pass
+    
     
 transcriber_model = AgentTranscriber()
 

@@ -9,3 +9,4 @@ docx2txt==0.8
 openai==1.44.0
 tiktoken==0.7.0
 gunicorn==23.0.0
+youtube-transcript-api

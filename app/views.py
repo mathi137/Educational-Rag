@@ -15,6 +15,7 @@ def root():
 def extract_data():
     try:    
         file = request.files['file']
+        user_id = request.args.get('user_id') or 0
         # other_data = request.form.to_dict()
 
         if not file:
@@ -23,7 +24,7 @@ def extract_data():
         file_name = file.filename
         file_bytes = file.read()
         
-        response = manager.extract_data_to_json(file_bytes, file_name)
+        response = manager.extract_data_to_json(file_bytes, file_name, user_id)
         
         return Response(json.dumps(response), status=202)
         
@@ -36,6 +37,7 @@ def extract_data():
 def extract_from_audio():
     try:    
         file = request.files['file']
+        user_id = request.args.get('user_id') or 0
 
         if not file:
             return Response(status=400)
@@ -43,7 +45,24 @@ def extract_from_audio():
         file_name = file.filename
         file_bytes = file.read()
         
-        response = manager.extract_data_to_audio(file_bytes, file_name)
+        response = manager.extract_data_to_audio(file_bytes, file_name, user_id)
+        
+        return Response(json.dumps(response), status=202)
+        
+    except Exception as e:
+        print(f'Exception: {str(e)}')
+        return Response(json.dumps(str(e)), status=500)
+
+
+@main.route('/extract-from-youtube', methods=['POST'])
+def extract_from_youtube():
+    try:    
+        url = request.args.get('url')
+
+        if not url:
+            return Response(status=400)
+        
+        response = manager.extract_from_youtube(url)
         
         return Response(json.dumps(response), status=202)
         
