@@ -58,11 +58,12 @@ def extract_from_audio():
 def extract_from_youtube():
     try:    
         url = request.args.get('url')
-
+        user_id = request.args.get('user_id') or 0
+        
         if not url:
             return Response(status=400)
         
-        response = manager.extract_from_youtube(url)
+        response = manager.extract_from_youtube(url, user_id)
         
         return Response(json.dumps(response), status=202)
         
