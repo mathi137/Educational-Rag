@@ -21,6 +21,7 @@ def chat_bot(question: str, document_id: str, user_id: Union[int, str] = 0) -> d
     similar_chunks = search_by_similar(question, document_id, user_id)
     similar_text = '\n'.join([chunk['$vectorize'] for chunk in similar_chunks])
     
+    print(similar_text)
     
     prompt = prompt_template.format(context=similar_text, question=question)
     
