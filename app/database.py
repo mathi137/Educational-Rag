@@ -29,7 +29,7 @@ def insert_content(chuncks, user_id: id_type = 0) -> str:
         my_collection.insert_many([
             {
                 'document_id': document_id,
-                'user_id': user_id,
+                'user_id': int(user_id),
                 'chunk_id': i,
                 'content': document.page_content,
                 '$vectorize': document.page_content,
