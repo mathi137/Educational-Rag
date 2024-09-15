@@ -1,29 +1,27 @@
+from langchain.output_parsers.openai_functions import JsonOutputFunctionsParser
+from langchain_community.utils.openai_functions import convert_pydantic_to_openai_function
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from typing import Union 
 
-# from app.models.chat_bot.invoice_prompt import system_message
-# from app.database import search_by_similar
+from app.models.audio_bot.invoice_prompt import system_message
+from app.models.audio_bot.invoice_schema import InvoiceJson
 
 load_dotenv() # take environment variables from .env
 
 
-# embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
 model = ChatOpenAI(model='gpt-4o-mini', temperature=0.1)
 
-prompt_template = PromptTemplate(
-    input_variables=['context'],
-    template="""
-Com base no contexto a seguir: 
-{context}
+parser = JsonOutputFunctionsParser()
+openai_functions = [convert_pydantic_to_openai_function(InvoiceJson)]
 
-Faça um resumo
-"""
-)
 
-def summarize(document_id, context) -> dict:
-    prompt = prompt_template.format(context=context)
-    response = model.invoke(prompt)
+def summarize(document_id, context: str) -> dict:
+    prompt = ChatPromptTemplate.from_messages(
+        [("system", system_message), ("user", "{input}")]
+    )
+    chain = prompt | model.bind(functions=openai_functions) | parser
+    response = chain.invoke({"input": context})
     
-    return {'document_id': document_id, 'response': dict(response)['content']} 
+    return {'document_id': document_id, 'response': response} 

@@ -38,11 +38,11 @@ def load_from_audio(file_bytes: bytes, file_name: str):
         temp_path = temp_file.name
         temp_file.write(file_data)
     
-
-    if file_extension in ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']:
+    supported_files = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
+    if file_extension in supported_files:
         text = transcriber_model.audio_to_text(temp_path)
     else:
-        raise Exception('File not supported.')
+        raise Exception(f'File not supported. The supported files are: {supported_files}')
     
     return text
 
