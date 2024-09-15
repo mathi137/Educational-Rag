@@ -37,9 +37,9 @@ def extract_from_youtube(url: str, user_id: Union[int, str] = 0):
     return response    
 
 
-def search_by_query(query: str, document_id: str = None, user_id: Union[int, str] = 0) -> list[dict]:
-    return database.search_by_similar(query, document_id, user_id)
+def search_by_query(query: str, document_id: str = None, user_id: Union[int, str] = 0, limit: Union[int, str] = 5) -> list[dict]:
+    return database.search_by_similar(query, document_id, user_id, limit)
 
 
-def chat_botQA(question: str, document_id: str, user_id: Union[int, str] = 0) -> dict:
-    return chat_bot_controller.chat_bot(question, document_id, user_id)
+def chat_botQA(question: str, document_id: str, user_id: Union[int, str] = 0, chat_history: dict = None) -> dict:
+    return chat_bot_controller.chat_bot(question, document_id, user_id, chat_history)

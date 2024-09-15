@@ -68,7 +68,7 @@ def search_by_similar(query: str, document_id: str = None, user_id: id_type = 0,
         cursor = my_collection.find(
             {"$and": filter},
             sort={"$vectorize": query},
-            limit=limit,
+            limit=int(limit),
             projection={"$vectorize": True},
             include_similarity=True,
         )

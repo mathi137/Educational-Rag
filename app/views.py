@@ -76,10 +76,11 @@ def extract_from_youtube():
 def search():
     try:
         user_id = request.args.get('user_id') or 0
+        limit = request.args.get('limit') or 5
         document_id = request.args.get('document_id')
         query = request.args.get('query')
         
-        response = manager.search_by_query(query, document_id, user_id)
+        response = manager.search_by_query(query, document_id, user_id, limit)
         
         return Response(json.dumps(response), status=202)
     
@@ -91,11 +92,13 @@ def search():
 @main.route('/chat', methods=['POST'])
 def chat():
     try:
+        chat_history = request.get_json(silent=True)
+        
         user_id = request.args.get('user_id') or 0
         document_id = request.args.get('document_id')
         question = request.args.get('question')
         
-        response = manager.chat_botQA(question, document_id, user_id)
+        response = manager.chat_botQA(question, document_id, user_id, chat_history)
         
         return Response(json.dumps(response), status=202)
     
