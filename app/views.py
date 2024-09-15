@@ -38,6 +38,8 @@ def extract_from_audio():
     try:    
         file = request.files['file']
         user_id = request.args.get('user_id') or 0
+        print('extract-from-audio:', user_id)
+        
 
         if not file:
             return Response(status=400)
@@ -59,7 +61,8 @@ def extract_from_youtube():
     try:    
         url = request.args.get('url')
         user_id = request.args.get('user_id') or 0
-        
+        print('extract-from-youtube:', user_id)
+
         if not url:
             return Response(status=400)
         
