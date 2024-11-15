@@ -1,9 +1,13 @@
+import astrapy
+from uuid import UUID
+
+from app.utils import bcolors
+
 from dotenv import load_dotenv
 from typing import Union
-from uuid import UUID
-import astrapy
 import json
 import os
+
 
 load_dotenv() # take environment variables from .env
 
@@ -23,6 +27,21 @@ class UUIDEncoder(json.JSONEncoder):
 
 
 def insert_content(chuncks, user_id: id_type = 0) -> str:
+    """
+    Insert content into the database.
+
+    This function takes a list of objects and inserts them into the database.
+    The objects should have a 'page_content' attribute, which is the text to be inserted.
+    The function also takes an optional 'user_id' parameter, which is the ID of the user inserting the content.
+
+    Args:
+        chuncks (list): A list of objects to be inserted.
+        user_id (id_type, optional): The ID of the user. Defaults to 0.
+
+    Returns:
+        str: The ID of the document inserted.
+    """
+    # Generate a unique document ID
     document_id = str(astrapy.ids.uuid4())
     
     try:
@@ -37,14 +56,25 @@ def insert_content(chuncks, user_id: id_type = 0) -> str:
         ])
         
     except Exception as e:
-        print(f'Exception: {str(e)}')
+        print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}')
         
     return document_id
 
 
 def insert_content_from_string(chuncks: list[str], user_id: id_type = 0) -> str:
+    """
+    Insert content into the database from a list of strings.
+
+    Args:
+        chuncks (list[str]): A list of strings to be inserted.
+        user_id (id_type, optional): The ID of the user. Defaults to 0.
+
+    Returns:
+        str: The ID of the document inserted.
+    """
     document_id = str(astrapy.ids.uuid4())
     
+    # Insert the content into the database
     try:
         my_collection.insert_many([
             {
@@ -57,19 +87,32 @@ def insert_content_from_string(chuncks: list[str], user_id: id_type = 0) -> str:
         ])
         
     except Exception as e:
-        print(f'Exception: {str(e)}')
+        print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}')
         
     return document_id
 
 
-def search_by_similar(query: str, document_id: str = None, user_id: id_type = 0, limit: id_type = 20) -> list[dict]:
-    filter = [{'user_id': int(user_id)}, {'document_id': document_id}] if document_id else [{'user_id': int(user_id)}]
-    
-    print('Query:', query)
+def search_by_similar(query: str, document_id: str = None, user_id: id_type = 0, limit: id_type = 10) -> list[dict]:
+    """
+    Search for similar chunks in the database.
+
+    Args:
+        query (str): The query to search for.
+        document_id (str, optional): The document ID to search in. Defaults to None.
+        user_id (id_type, optional): The user ID to search for. Defaults to 0.
+        limit (id_type, optional): The maximum number of results to return. Defaults to 10.
+
+    Returns:
+        list[dict]: The list of chunks matching the search criteria.
+    """
+
+    # Create the filter for the search
+    db_filter = [{'user_id': int(user_id)}, {'document_id': document_id}] if document_id else [{'user_id': int(user_id)}]
     
     try:
+        # Search for similar chunks in the database
         cursor = my_collection.find(
-            {"$and": filter},
+            {"$and": db_filter},
             sort={"$vectorize": query},
             limit=int(limit),
             projection={"$vectorize": True},
@@ -77,27 +120,40 @@ def search_by_similar(query: str, document_id: str = None, user_id: id_type = 0,
         )
         
     except Exception as e:
-        print(f'Exception: {str(e)}')
+        print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}') 
     
     # Cursor is closed when called
-    return list(cursor) 
+    return list(cursor)
 
 
 
 def search_by_index(index: id_type, document_id: str = None, user_id: id_type = 0) -> list[dict]:
+    """
+    Search for a chunk by index in the database.
+
+    Args:
+        index (id_type): The index of the chunk to search for.
+        document_id (str, optional): The document ID to search in. Defaults to None.
+        user_id (id_type, optional): The user ID to search for. Defaults to 0.
+
+    Returns:
+        list[dict]: The list of chunks matching the search criteria.
+    """
+    # Create the filter for the search
     if document_id:
-        filter = [{'user_id': user_id}, {'chunk_id': index},  {'document_id': document_id}]    
+        db_filter = [{'user_id': user_id}, {'chunk_id': index},  {'document_id': document_id}]    
     else:
-        filter = [{'user_id': user_id}, {'chunk_id': index}] 
+        db_filter = [{'user_id': user_id}, {'chunk_id': index}] 
     
+    # Execute the search
     try:
         cursor = my_collection.find(
-            {"$and": filter},
+            {"$and": db_filter},
             limit=1,
         )
         
     except Exception as e:
-        print(f'Exception: {str(e)}')
+        print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}')
     
     # Cursor is closed when called
     return list(cursor) 

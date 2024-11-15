@@ -9,4 +9,9 @@ docx2txt==0.8
 openai==1.44.0
 tiktoken==0.7.0
 gunicorn==23.0.0
-youtube-transcript-api
+youtube-transcript-api==0.6.2
+Flask-SocketIO==5.4.1
+azure-cognitiveservices-speech==1.41.1
+gevent==24.11.1
+gevent-websocket==0.10.1
+flask-cors

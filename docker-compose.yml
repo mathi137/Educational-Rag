@@ -1,0 +1,7 @@
+services:
+  lain_api1: &lain_api
+    build: .
+    hostname: lain-api
+    container_name: lianAI-container
+    ports:
+      - 5000:5000
