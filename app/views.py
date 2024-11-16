@@ -168,7 +168,7 @@ def chat_endpoint() -> Response:
         response = manager.chat_botQA(question, document_id, user_id)
 
         # Return the response as JSON
-        return Response(response, content_type='application/json', status=202)
+        return Response(json.dumps(response), content_type='application/json', status=202)
 
     except Exception as e:
         print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}')
