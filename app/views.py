@@ -176,7 +176,7 @@ def chat_endpoint() -> Response:
 
 
 @main.route('/chat-stream', methods=['POST'])
-def chat_endpoint() -> Response:
+def chat_stream_endpoint() -> Response:
     """
     Chat with a document.
 
