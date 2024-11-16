@@ -27,6 +27,19 @@ def chat_bot(question: str, document_id: str, user_id: Union[int, str] = 0):
     prompt = prompt_template.format(context=similar_text, question=question)
     
     print(f'{bcolors.OKBLUE}Chat -> Genereting chat response{bcolors.ENDC}')
+    response = model.invoke(prompt)
+    print(f'{bcolors.OKBLUE}\nChat -> Chat response generated{bcolors.ENDC}')
+    
+    return dict(response)
+    
+
+def chat_bot_stream(question: str, document_id: str, user_id: Union[int, str] = 0):
+    similar_chunks = search_by_similar(question, document_id, user_id)
+    similar_text = '\n'.join([chunk['$vectorize'] for chunk in similar_chunks])
+    
+    prompt = prompt_template.format(context=similar_text, question=question)
+    
+    print(f'{bcolors.OKBLUE}Chat -> Genereting chat response{bcolors.ENDC}')
     
     # Generate the response stream
     for chunk in model.stream(prompt):  # Process each streamed chunk

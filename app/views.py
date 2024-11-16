@@ -139,9 +139,43 @@ def search_endpoint() -> Response:
     except Exception as e:
         print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}')
         return Response(json.dumps(str(e)), status=500)
-    
+
 
 @main.route('/chat', methods=['POST'])
+def chat_endpoint() -> Response:
+    """
+    Chat with a document.
+
+    This endpoint generates a chat response based on a document and a question.
+
+    Args:
+        user_id (int, str): The ID of the user.
+        document_id (str): The ID of the document to chat with.
+        question (str): The question to ask the chat bot.
+
+    Returns:
+        Response: A JSON response containing the chat response.
+    """
+    user_id = request.args.get('user_id', type=int, default=0)
+    document_id = request.args.get('document_id')
+    question = request.args.get('question')
+
+    if not question:
+        return Response('Question not provided', status=400)
+
+    try:
+        # Get the chat response from the model
+        response = manager.chat_botQA(question, document_id, user_id)
+
+        # Return the response as JSON
+        return Response(response, content_type='application/json', status=202)
+
+    except Exception as e:
+        print(f'{bcolors.FAIL}Exception: {str(e)}{bcolors.ENDC}')
+        return Response(json.dumps(str(e)), status=500)
+
+
+@main.route('/chat-stream', methods=['POST'])
 def chat_endpoint() -> Response:
     """
     Chat with a document.
